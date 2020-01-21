@@ -2,10 +2,11 @@
 #define RECEIVER_PIN 31
 
 struct DataPack{
+  uint8_t data_size;
   float temp  = 0.0f;
   float hum   = 0.0f;
-  int counter = 0;
-  int dht_chk = 0;
+  uint16_t counter = 0;
+  uint16_t dht_chk = 0;
 };
 
 DataPack dataPack;
@@ -16,17 +17,18 @@ int time_start = 0;
 void setup()
 {   
   Serial.begin(9600);
-  Serial.println("STARTED\n");
   delay(200);    
+
+  Serial.println("MEGA STARTED\n");
+  Serial.print("sizeof(DataPack)         = "); Serial.println(sizeof(DataPack));
+  Serial.print("sizeof(dataPack)         = "); Serial.println(sizeof(dataPack));
+  Serial.print("sizeof(DATA_PACK_BUFFER) = "); Serial.println(sizeof(DATA_PACK_BUFFER));
+  Serial.print("DATA_PACK_SIZE           = "); Serial.println(DATA_PACK_SIZE);
+  Serial.println("waiting for message..."); 
+
   man.setupReceive(RECEIVER_PIN, MAN_1200);
   man.beginReceiveArray(DATA_PACK_SIZE, DATA_PACK_BUFFER);
-  //man.beginReceive();
-  delay(200);
-  Serial.println("waiting for message...");
-
-  for(int i = 0; i < 12; i++)
-    DATA_PACK_BUFFER[i] = 4;
-  
+  //man.beginReceive(); 
 }
 
 
@@ -36,22 +38,27 @@ void loop()
   if(man.receiveComplete())
   { 
     Serial.println(" - - - RECEIVED SOMETHING - - -");
-
-    for(int i = 0; i < 12; i++)
-      Serial.println(DATA_PACK_BUFFER[i]);
+    //uint16_t m = man.getMessage();
+    //Serial.println(m);
+    memcpy(&dataPack, DATA_PACK_BUFFER, DATA_PACK_SIZE);
 
     
-    memcpy(&dataPack, DATA_PACK_BUFFER, DATA_PACK_SIZE);
+    Serial.print("RAW  : ");
+    for(int i = 0; i < 12; i++){
+      Serial.print("[");
+      Serial.print(DATA_PACK_BUFFER[i]);
+      Serial.print("]");      
+    }
+
+    
+    Serial.print("\nDATA :");    
     Serial.print(dataPack.temp); Serial.print(" - ");
     Serial.print(dataPack.hum);  Serial.print(" - ");
     Serial.println(dataPack.counter);
-    
-    /*uint16_t m = man.getMessage();
-    Serial.println(m);*/
-    
+        
     //man.beginReceive();
-    man.beginReceiveArray(DATA_PACK_SIZE, DATA_PACK_BUFFER);
-    delay(2000);
+    //delay(500);
+    man.beginReceiveArray(DATA_PACK_SIZE, DATA_PACK_BUFFER);    
   }
   
   //Serial.println(counter);
