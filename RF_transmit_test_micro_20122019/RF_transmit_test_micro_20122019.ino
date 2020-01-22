@@ -18,7 +18,6 @@ void blinkMulti(int pin, int N, int d1 = 200, int d2 = 200);
 void blink(int pin, int d1 = 200, int d2 = 200);
 
 void setup() {  
-
   dataPack.data_size = DATA_PACK_SIZE;
   
   while(!Serial);
@@ -33,13 +32,6 @@ void setup() {
   Serial.println("MICRO STARTED\n");
   Serial.print("sizeof(DataPack) = "); Serial.println(sizeof(DataPack));
   Serial.print("sizeof(dataPack) = "); Serial.println(sizeof(dataPack));
-
-  /*
-  DATA_PACK_BUFFER[0] = DATA_PACK_SIZE;
-  for(int i = 0; i < DATA_PACK_SIZE; i++)
-    DATA_PACK_BUFFER[i] = i;
-  */
-  
 }
 
 

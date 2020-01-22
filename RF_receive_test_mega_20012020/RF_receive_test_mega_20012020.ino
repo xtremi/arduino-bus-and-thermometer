@@ -26,7 +26,7 @@ void setup()
   Serial.print("DATA_PACK_SIZE           = "); Serial.println(DATA_PACK_SIZE);
   Serial.println("waiting for message..."); 
 
-  man.setupReceive(RECEIVER_PIN, MAN_1200);
+  man.setupReceive(RECEIVER_PIN, MAN_600);
   man.beginReceiveArray(DATA_PACK_SIZE, DATA_PACK_BUFFER);
   //man.beginReceive(); 
 }
@@ -56,8 +56,7 @@ void loop()
     Serial.print(dataPack.hum);  Serial.print(" - ");
     Serial.println(dataPack.counter);
         
-    //man.beginReceive();
-    //delay(500);
+    //man.beginReceive();    
     man.beginReceiveArray(DATA_PACK_SIZE, DATA_PACK_BUFFER);    
   }
   

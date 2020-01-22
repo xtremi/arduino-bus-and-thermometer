@@ -2,26 +2,32 @@
 #define LED_PIN 1
 #define TRANSMIT_PIN 3
 
-void blinkMulti(int pin, int N, int d1 = 200, int d2 = 200);
-void blink(int pin, int d1 = 200, int d2 = 200);
-
-void setup() {  
-  delay(500);  
-  pinMode(LED_PIN, OUTPUT);
-  digitalWrite(LED_PIN, HIGH); 
-  man.workAround1MhzTinyCore();
-  man.setupTransmit(TRANSMIT_PIN, MAN_1200);  
-  digitalWrite(LED_PIN, LOW); 
-}
-
 struct DataPack{
+  uint8_t data_size;
   float temp  = 0.0f;
   float hum   = 0.0f;
-  int counter = 0;
-  int dht_chk = 0;
+  uint16_t counter = 0;
+  uint16_t dht_chk = 0;
 };
 
 DataPack dataPack;
+const uint8_t DATA_PACK_SIZE = sizeof(DataPack);
+uint8_t DATA_PACK_BUFFER[DATA_PACK_SIZE];
+
+void blinkMulti(int pin, int N, int d1 = 200, int d2 = 200);
+void blink(int pin, int d1 = 200, int d2 = 200);
+
+void setup() { 
+  dataPack.data_size = DATA_PACK_SIZE;
+   
+  delay(500);  
+  pinMode(LED_PIN, OUTPUT);
+  digitalWrite(LED_PIN, HIGH); 
+  //man.workAround1MhzTinyCore();
+  man.setupTransmit(TRANSMIT_PIN, MAN_600);  
+  digitalWrite(LED_PIN, LOW); 
+}
+
 int counter = 1;
 int T_delay = 1000;
 void loop() {
@@ -31,8 +37,9 @@ void loop() {
   dataPack.hum     = 30.0;
   dataPack.dht_chk = 0;  
   dataPack.counter = counter++; 
-  //man.transmitArray(sizeof(DataPack), (uint8_t*)&dataPack);
-  man.transmit(123);
+  memcpy(DATA_PACK_BUFFER, &dataPack, DATA_PACK_SIZE);
+  man.transmitArray(DATA_PACK_SIZE, DATA_PACK_BUFFER);
+  //man.transmit((uint16_t)123);
   
   digitalWrite(LED_PIN, LOW);
   blinkMulti(LED_PIN,5, 100, 100);
