@@ -1,23 +1,24 @@
 #include <Manchester.h>
 #include "Graph.h"
 
-#define RECEIVER_PIN 31
-#define MIN_TIME_BETWEEN_GRAPH_PLOT_1 2000
-#define MIN_TIME_BETWEEN_GRAPH_PLOT_2 60000
-#define TIME_BETWEEN_GRAPH_RESET_1 60000
-#define TIME_BETWEEN_GRAPH_RESET_2 360000
+#define RECEIVER_PIN								31
+
+#define MIN_TIME_BETWEEN_GRAPH_PLOT_1				2000
+#define MIN_TIME_BETWEEN_GRAPH_PLOT_2				60000
+#define TIME_BETWEEN_GRAPH_RESET_1					60000
+#define TIME_BETWEEN_GRAPH_RESET_2					360000
 #define LOOP_ITERATIONS_BETWEEN_TIME_DISPLAY_UPDATE 100
 
 #if !defined(SmallFont)
 extern uint8_t SmallFont[];    //.kbv GLUE defines as GFXFont ref
 #endif
 
-Axes axes(W, H, YELLOW, 300);
+Axes axes(W, H, Pos(40, H - 30), YELLOW, 300, 250);
 Graph graph(&axes);
 
 struct timer_info
 {
-  int      dt						= 0;
+  int      dt						      = 0;
   long int currentTime				= 0;
   long int previousTime				= 0;
   
@@ -103,6 +104,39 @@ void loop()
  
 	loopCounter++;  
 }
+
+
+void initArduino()
+{
+	Serial.begin(9600);
+}
+
+void initGraph()
+{
+	axes.setTicks(12, 4, 0, 60, -10, 30);
+	axes.drawAll();
+}
+void initScreen()
+{
+	myGLCD.InitLCD();
+	myGLCD.setFont(SmallFont);
+	myGLCD.clrScr();
+	myGLCD.setTextSize(1);
+	fillScreen(BLACK);
+	initGraph();
+	myGLCD.setTextSize(2);
+	drawText("Lanza", Pos(W / 2 - 60, 20), GREEN, BLACK);
+}
+void initESP8266()
+{
+	Serial1.begin(9600);
+}
+void initRF()
+{
+	man.setupReceive(RECEIVER_PIN, MAN_600);
+	man.beginReceiveArray(RF_DATA_PACK_SIZE, RF_DATA_PACK_BUFFER);
+}
+
 
 void loopTime()
 {
@@ -242,42 +276,4 @@ char* getDHTCHKstr(int chk) {
 	if (chk < 0 || chk > 2)
 		chk = 3;
 	return DHT_CHK_STR[chk];
-}
-
-
-
-
-
-
-
-
-void initArduino()
-{
-  Serial.begin(9600);
-}
-
-void initGraph()
-{
-  axes.setTicks(12, 4, 0, 60, -10, 30);
-  axes.drawAll();
-}
-void initScreen()
-{
-  myGLCD.InitLCD();
-  myGLCD.setFont(SmallFont);  
-  myGLCD.clrScr();
-  myGLCD.setTextSize(1);
-  fillScreen(BLACK);  
-  initGraph();
-  myGLCD.setTextSize(2);  
-  drawText("Lanza", Pos(W/2 - 60, 20),  GREEN, BLACK);
-}
-void initESP8266()
-{
-  Serial1.begin(9600);
-}
-void initRF()
-{
-  man.setupReceive(RECEIVER_PIN, MAN_600);
-  man.beginReceiveArray(RF_DATA_PACK_SIZE, RF_DATA_PACK_BUFFER);
 }

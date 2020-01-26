@@ -8,15 +8,15 @@ Graph::Graph(Axes* _axes){
 void Graph::resetGraph()
 {
   axes->drawAll();
-  prevPoint.x = axes->getOriginX() + (int)((0.0 - axes->minX()) * axes->xStep());
+  prevPoint.x = axes->originX() + (int)((0.0 - axes->minX()) * axes->xStep());
 }
 
 Pos Graph::getScreenCoords(const VecF& p)
 {
   Pos screenCoord;
 
-  screenCoord.x = axes->getOriginX() + (int)((p.x - axes->minX()) * axes->xStep()); 
-  screenCoord.y = axes->getOriginY() - (int)((p.y - axes->minY()) * axes->yStep()); 
+  screenCoord.x = axes->originX() + (int)((p.x - axes->minX()) * axes->xStep()); 
+  screenCoord.y = axes->originY() - (int)((p.y - axes->minY()) * axes->yStep()); 
 
   return screenCoord;
 }
